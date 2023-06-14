@@ -1,4 +1,6 @@
 
+using System.Numerics;
+
 public class Grid
 {
     private Cell[][] cells;
@@ -75,7 +77,7 @@ public class Grid
     {
         for (int col = 0; col < cols; col++)
         {
-            this[row, col]!.Highlight = true;
+            this[row, col]!.Mark = "*";
         }
     }
 
@@ -83,7 +85,7 @@ public class Grid
     {
         for (int row = 0; row < rows; row++)
         {
-            this[row, col]!.Highlight = true;
+            this[row, col]!.Mark = "*";
         }
     }
 
@@ -102,6 +104,41 @@ public class Grid
 
             }
         }
+    }
+
+    public int ManhattanDistance(Cell a, Cell b)
+        => Math.Abs(a.col - b.col) + Math.Abs(a.row - b.row);
+
+
+    public List<Cell> ShortestPath(int startX, int startY, int goalX, int goalY)
+    {
+
+        var S = new Stack<(Cell, List<Cell>)>();
+        var discovered = new HashSet<Cell>();
+        var current = this[startX, startY]!;
+        var goal = this[goalX, goalY]!;
+        current.Mark = "A";
+        goal.Mark = "B";
+        S.Push((current, new List<Cell>()));
+        while (S.Any())
+        {
+            var (v, path) = S.Pop();
+            if (v == goal) return path;
+            var neighbours = v.Neighbours().Where(n => v.IsLinked(n));
+            foreach (var n in neighbours)
+            {
+                if (!discovered.Contains(n))
+                {
+                    if (n == goal) return path;
+                    discovered.Add(n);
+                    var updatedPath = path.ToList();
+                    updatedPath.Add(n);
+                    S.Push((n, updatedPath));
+                }
+            }
+        }
+
+        return new List<Cell>();
     }
 
 }

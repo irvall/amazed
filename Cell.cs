@@ -5,7 +5,7 @@ public class Cell
     private HashSet<Cell>? links;
     public Cell? north, south, east, west;
 
-    public bool Highlight { get; set; } = false;
+    public string Mark { get; set; } = "";
 
     public Cell(int row, int col)
     {
@@ -56,5 +56,9 @@ public class Cell
         }
         .Where(cell => cell != null)
         .ToList();
+
+    public override bool Equals(object? other) =>
+        other is Cell && this.row == ((Cell)other).row && this.col == ((Cell)other).col;
+
 
 }

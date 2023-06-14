@@ -6,9 +6,9 @@ public class Sidewinder : IMazeAlgorithm
     {
         var random = new Random();
         var rows = g.Rows();
+        var run = new List<Cell>();
         for (int row = g.rows - 1; row >= 0; row--)
         {
-            var run = new List<Cell>();
             for (int col = 0; col < g.cols; col++)
             {
                 var currentCell = g[row, col]!;
@@ -36,6 +36,7 @@ public class Sidewinder : IMazeAlgorithm
                 randomCell.Link(randomCell.north!, true);
                 run.Clear();
             }
+            run.Clear();
         }
     }
 }

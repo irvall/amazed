@@ -25,7 +25,7 @@ public class Util
 
             foreach (Cell cell in row)
             {
-                body = cell.Highlight ? " * " : "   ";
+                body = $" {(cell.Mark.Length > 0 ? cell.Mark : " ")} ";
                 string eastBoundary = cell.east != null && cell.IsLinked(cell.east) ? " " : "|";
                 top.Append(body + eastBoundary);
                 body = "   ";
