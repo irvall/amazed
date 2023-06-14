@@ -1,0 +1,15 @@
+/Users/johan/projects/mazes/bin/Debug/net6.0/mazes
+/Users/johan/projects/mazes/bin/Debug/net6.0/mazes.deps.json
+/Users/johan/projects/mazes/bin/Debug/net6.0/mazes.runtimeconfig.json
+/Users/johan/projects/mazes/bin/Debug/net6.0/mazes.dll
+/Users/johan/projects/mazes/bin/Debug/net6.0/mazes.pdb
+/Users/johan/projects/mazes/obj/Debug/net6.0/mazes.csproj.AssemblyReference.cache
+/Users/johan/projects/mazes/obj/Debug/net6.0/mazes.GeneratedMSBuildEditorConfig.editorconfig
+/Users/johan/projects/mazes/obj/Debug/net6.0/mazes.AssemblyInfoInputs.cache
+/Users/johan/projects/mazes/obj/Debug/net6.0/mazes.AssemblyInfo.cs
+/Users/johan/projects/mazes/obj/Debug/net6.0/mazes.csproj.CoreCompileInputs.cache
+/Users/johan/projects/mazes/obj/Debug/net6.0/mazes.dll
+/Users/johan/projects/mazes/obj/Debug/net6.0/refint/mazes.dll
+/Users/johan/projects/mazes/obj/Debug/net6.0/mazes.pdb
+/Users/johan/projects/mazes/obj/Debug/net6.0/mazes.genruntimeconfig.cache
+/Users/johan/projects/mazes/obj/Debug/net6.0/ref/mazes.dll
