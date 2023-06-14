@@ -6,41 +6,35 @@ public class Sidewinder : IMazeAlgorithm
     {
         var random = new Random();
         var rows = g.Rows();
-        while (rows.MoveNext())
+        for (int row = g.rows - 1; row >= 0; row--)
         {
-            var row = rows.Current;
-            var currentRun = new List<Cell>();
-            for (int i = 0; i < row.Length; i++)
+            var run = new List<Cell>();
+            for (int col = 0; col < g.cols; col++)
             {
-                System.Console.WriteLine(Util.GridString(g));
-                var currentCell = row[i];
-                currentRun.Add(currentCell);
-                if (currentCell.col == 0)
+                var currentCell = g[row, col]!;
+                run.Add(currentCell);
+                if (row == 0)
                 {
-                    currentCell.Link(currentCell.east, true);
+                    currentCell.Link(currentCell.east!, true);
                     continue;
                 }
                 else Debug.Assert(currentCell.north != null);
-                if (i == row.Length - 1)
+                if (col == g.cols - 1)
                 {
                     currentCell.Link(currentCell.north, true);
                     continue;
                 }
                 else Debug.Assert(currentCell.east != null);
                 var heads = random.NextDouble() >= 0.5;
-                Cell toVisit;
                 if (heads)
                 {
-                    var randomIndex = random.Next(currentRun.Count);
-                    System.Console.WriteLine($"Generated index {randomIndex} - currently at {i}");
-                    System.Console.WriteLine("Run size " + currentRun.Count);
-                    var randomCell = currentRun[randomIndex];
-                    currentCell = randomCell;
-                    toVisit = currentCell.north;
+                    currentCell.Link(currentCell.east, true);
+                    continue;
                 }
-                else toVisit = currentCell.east;
-
-                currentCell.Link(toVisit, true);
+                var randomIndex = random.Next(run.Count);
+                var randomCell = run[randomIndex];
+                randomCell.Link(randomCell.north!, true);
+                run.Clear();
             }
         }
     }

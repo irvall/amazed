@@ -1,16 +1,31 @@
+using System.Diagnostics;
+
 public class BinaryTree : IMazeAlgorithm
 {
     public void Run(Grid g)
     {
         var random = new Random();
         var rows = g.Rows();
-        while (rows.MoveNext())
+        for (int row = g.rows - 1; row >= 0; row--)
         {
-            var row = rows.Current;
-            for (int i = 0; i < row.Length; i++)
+            for (int col = 0; col < g.cols; col++)
             {
-                var currentCell = row[i];
-                if (currentCell.col == row.Length - 1) currentCell.Highlight = true;
+                var currentCell = g[row, col]!;
+                if (row == 0)
+                {
+                    currentCell.Link(currentCell.east!, true);
+                    continue;
+                }
+                else Debug.Assert(currentCell.north != null);
+                if (col == g.cols - 1)
+                {
+                    currentCell.Link(currentCell.north, true);
+                    continue;
+                }
+                else Debug.Assert(currentCell.east != null);
+                var heads = random.NextDouble() >= 0.5;
+                Cell toVisit = heads ? currentCell.north : currentCell.east;
+                currentCell.Link(toVisit, true);
             }
         }
     }
