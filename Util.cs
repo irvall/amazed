@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 
 public class Util
@@ -25,7 +26,7 @@ public class Util
 
             foreach (Cell cell in row)
             {
-                body = $" {(cell.Mark.Length > 0 ? cell.Mark : " ")} ";
+                body = $" {cell.Body} ";
                 string eastBoundary = cell.east != null && cell.IsLinked(cell.east) ? " " : "|";
                 top.Append(body + eastBoundary);
                 body = "   ";
@@ -38,6 +39,28 @@ public class Util
         }
 
         return sb.ToString();
+    }
+
+    public static string SingleDigit(int digit)
+    {
+        if (digit >= 0 && digit <= 9) return digit.ToString();
+        digit -= 10;
+        char newChar = (char)('a' + digit);
+        if (newChar > 'z')
+        {
+            digit -= 26;
+            newChar = (char)('A' + digit);
+        }
+        return newChar.ToString();
+    }
+
+    public static T MeasureTime<T>(Func<T> action)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var value = action.Invoke();
+        stopwatch.Stop();
+        Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}ms");
+        return value;
     }
 
 }

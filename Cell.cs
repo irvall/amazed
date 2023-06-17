@@ -2,15 +2,16 @@ public class Cell
 {
     public int row;
     public int col;
-    private HashSet<Cell>? links;
+    public HashSet<Cell> Links { get; set; }
     public Cell? north, south, east, west;
 
-    public string Mark { get; set; } = "";
+    public string Body { get; set; } = " ";
 
     public Cell(int row, int col)
     {
         this.row = row;
         this.col = col;
+        Links = new HashSet<Cell>();
     }
 
     public override int GetHashCode()
@@ -24,27 +25,21 @@ public class Cell
     public void Link(Cell other, bool bothWays)
     {
         if (other == null) return;
-        links ??= new HashSet<Cell>();
-        links.Add(other);
+        Links.Add(other);
         if (bothWays)
             other.Link(this, false);
     }
 
     public void UnLink(Cell other, bool bothWays)
     {
-        if (links == null)
-        {
-            Console.WriteLine($"Warning: Call to UnLink({other},{bothWays}), but no cells to unlink!");
-            return;
-        }
-        links.Remove(other);
+        Links.Remove(other);
         if (bothWays)
             other.UnLink(this, false);
     }
 
-    public bool IsLinked(Cell other)
+    public bool IsLinked(Cell? other)
     {
-        return links?.Contains(other) ?? false;
+        return other != null && Links.Contains(other);
     }
 
     public List<Cell> Neighbours() => new List<Cell>

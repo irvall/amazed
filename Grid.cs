@@ -7,15 +7,15 @@ public class Grid
     public int rows;
     public int cols;
 
-    public Grid(int rowCount, int colCount)
+    public Grid(int colCount, int rowCount)
     {
         this.rows = rowCount;
         this.cols = colCount;
         cells = new Cell[rows][];
-        for (int i = 0; i < cols; i++)
+        for (int i = 0; i < rows; i++)
         {
             cells[i] = new Cell[cols];
-            for (int j = 0; j < rows; j++)
+            for (int j = 0; j < cols; j++)
             {
                 cells[i][j] = new Cell(j, i);
             }
@@ -62,22 +62,16 @@ public class Grid
         }
     }
 
-    public IEnumerator<Cell> Cells()
+    public List<Cell> Cells()
     {
-        foreach (Cell[] row in cells)
-        {
-            foreach (Cell cell in row)
-            {
-                yield return cell;
-            }
-        }
+        return cells.SelectMany(row => row).ToList();
     }
 
     public void HighlightRow(int row)
     {
         for (int col = 0; col < cols; col++)
         {
-            this[row, col]!.Mark = "*";
+            this[row, col]!.Body = "*";
         }
     }
 
@@ -85,7 +79,7 @@ public class Grid
     {
         for (int row = 0; row < rows; row++)
         {
-            this[row, col]!.Mark = "*";
+            this[row, col]!.Body = "*";
         }
     }
 
@@ -108,37 +102,5 @@ public class Grid
 
     public int ManhattanDistance(Cell a, Cell b)
         => Math.Abs(a.col - b.col) + Math.Abs(a.row - b.row);
-
-
-    public List<Cell> ShortestPath(int startX, int startY, int goalX, int goalY)
-    {
-
-        var S = new Stack<(Cell, List<Cell>)>();
-        var discovered = new HashSet<Cell>();
-        var current = this[startX, startY]!;
-        var goal = this[goalX, goalY]!;
-        current.Mark = "A";
-        goal.Mark = "B";
-        S.Push((current, new List<Cell>()));
-        while (S.Any())
-        {
-            var (v, path) = S.Pop();
-            if (v == goal) return path;
-            var neighbours = v.Neighbours().Where(n => v.IsLinked(n));
-            foreach (var n in neighbours)
-            {
-                if (!discovered.Contains(n))
-                {
-                    if (n == goal) return path;
-                    discovered.Add(n);
-                    var updatedPath = path.ToList();
-                    updatedPath.Add(n);
-                    S.Push((n, updatedPath));
-                }
-            }
-        }
-
-        return new List<Cell>();
-    }
 
 }
