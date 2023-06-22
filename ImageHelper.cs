@@ -1,61 +1,57 @@
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Formats.Gif;
 
 public class ImageHelper
 {
 
-    public static Image<Rgba32> CreatePNG(Grid g, string name = "maze")
+
+    public static Image<Rgba32> CreatePNG(Grid g, int cellSize = 10, string name = "maze")
     {
-        var cellSize = 100;
 
         var width = g.cols * cellSize;
         var height = g.rows * cellSize;
-        cellSize -= 20;
-        var halfCell = cellSize / 2;
 
-        var linePen = new Pen(new SolidBrush(Color.Black), 1);
-
-        using (Image<Rgba32> image = new Image<Rgba32>(width, height))
+        using (Image<Rgba32> image = new Image<Rgba32>(width + 1, height + 1))
         {
             // Draw a line from point (50, 50) to (350, 250)
             image.Mutate(x => x.Fill(Color.White));
 
             var lines = new List<PointF[]>();
-            var ids = new List<(int, PointF)>();
-            for (int y = 0; y < g.rows; y++)
+            var rects = new Dictionary<RectangleF, Color>();
+            g.Cells().ForEach(cell =>
             {
-                var py = y * cellSize + 100;
-                for (int x = 0; x < g.cols; x++)
+                var x1 = cell.col * cellSize;
+                var y1 = cell.row * cellSize;
+                var x2 = (cell.col + 1) * cellSize;
+                var y2 = (cell.row + 1) * cellSize;
+                var ul = new PointF(x1, y1);
+                var ur = new PointF(x2, y1);
+                var lr = new PointF(x2, y2);
+                var ll = new PointF(x1, y2);
+                if (cell.north == null)
+                    lines.Add(new[] { ul, ur });
+                if (cell.west == null)
+                    lines.Add(new[] { ul, ll });
+                if (!cell.IsLinked(cell.east))
+                    lines.Add(new[] { ur, lr });
+                if (!cell.IsLinked(cell.south))
+                    lines.Add(new[] { ll, lr });
+
+                var color = g.BackgroundColorFor(cell);
+                if (color != null)
                 {
-                    var cell = g[y, x]!;
-                    var id = y * g.rows + x;
-                    var px = cellSize * x + 100;
-                    ids.Add((id, new PointF(px - 5, py)));
-                    var lil = 2;
-                    var ul = new PointF(px - halfCell + lil, py - halfCell + lil);
-                    var ur = new PointF(px + halfCell + lil, py - halfCell + lil);
-                    var lr = new PointF(px + halfCell + lil, py + halfCell + lil);
-                    var ll = new PointF(px - halfCell + lil, py + halfCell + lil);
-                    if (!cell.IsLinked(cell.north))
-                        lines.Add(new[] { ul, ur });
-                    if (!cell.IsLinked(cell.south))
-                        lines.Add(new[] { ll, lr });
-                    if (!cell.IsLinked(cell.east))
-                        lines.Add(new[] { ur, lr });
-                    if (!cell.IsLinked(cell.west))
-                        lines.Add(new[] { ul, ll });
+                    var rect = new RectangleF(x1, y1, Math.Abs(x1 - x2), Math.Abs(y1 - y2));
+                    rects[rect] = (Color)color;
                 }
-            }
-            var family = SystemFonts.Collection.Families.FirstOrDefault(fam => fam.Name == "Microsoft Sans Serif");
-            var font = new Font(family, 6);
+            });
+
             image.Mutate(ctx =>
             {
+                rects.ToList().ForEach(pair =>
+                    ctx.Fill(pair.Value, pair.Key));
                 lines.ForEach(line =>
-                    ctx.DrawLines(linePen, line));
-                ids.ForEach(id =>
-                {
-                    ctx.DrawText(id.Item1.ToString(), font, Color.Black, id.Item2);
-                });
+                    ctx.DrawLines(Color.Black, 1, line));
             });
 
             // Save the image as a PNG file
@@ -65,17 +61,45 @@ public class ImageHelper
             return image;
         }
     }
-}
 
-internal record struct NewStruct(PointF From, PointF To)
-{
-    public static implicit operator (PointF From, PointF To)(NewStruct value)
+    public static void AnimatedDjikstra(Grid g, Cell origin)
     {
-        return (value.From, value.To);
-    }
 
-    public static implicit operator NewStruct((PointF From, PointF To) value)
-    {
-        return new NewStruct(value.From, value.To);
+        int width = 600;
+        int height = 600;
+
+
+        // Delay between frames in (1/100) of a second.
+        const int frameDelay = 100;
+
+        // For demonstration: use images with different colors.
+        Color[] colors = { Color.Green, Color.Red };
+
+        // Create empty image.
+        using Image<Rgba32> gif = new(width, height, Color.Blue);
+
+        // Set animation loop repeat count to 5.
+        var gifMetaData = gif.Metadata.GetGifMetadata();
+        gifMetaData.RepeatCount = 5;
+
+        // Set the delay until the next image is displayed.
+        GifFrameMetadata metadata = gif.Frames.RootFrame.Metadata.GetGifMetadata();
+        metadata.FrameDelay = frameDelay;
+        for (int i = 0; i < colors.Length; i++)
+        {
+            // Create a color image, which will be added to the gif.
+            using Image<Rgba32> image = new(width, height, colors[i]);
+
+            // Set the delay until the next image is displayed.
+            metadata = image.Frames.RootFrame.Metadata.GetGifMetadata();
+            metadata.FrameDelay = frameDelay;
+
+            // Add the color image to the gif.
+            gif.Frames.AddFrame(image.Frames.RootFrame);
+        }
+
+        // Save the final result.
+        gif.SaveAsGif("output.gif");
+
     }
 }

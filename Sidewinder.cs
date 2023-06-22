@@ -2,6 +2,13 @@ using System.Diagnostics;
 
 public class Sidewinder : IMazeAlgorithm
 {
+
+    public static void On(Grid g)
+    {
+        var sidewinder = new Sidewinder();
+        sidewinder.Run(g);
+    }
+
     public void Run(Grid g)
     {
         var random = new Random();
@@ -39,4 +46,5 @@ public class Sidewinder : IMazeAlgorithm
             run.Clear();
         }
     }
+
 }

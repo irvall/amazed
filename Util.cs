@@ -26,7 +26,7 @@ public class Util
 
             foreach (Cell cell in row)
             {
-                body = $" {cell.Body} ";
+                body = $" {g.CellContent(cell)} ";
                 string eastBoundary = cell.east != null && cell.IsLinked(cell.east) ? " " : "|";
                 top.Append(body + eastBoundary);
                 body = "   ";
@@ -59,7 +59,7 @@ public class Util
         var stopwatch = Stopwatch.StartNew();
         var value = action.Invoke();
         stopwatch.Stop();
-        Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}ms");
+        Console.WriteLine($"Executed in {stopwatch.ElapsedMilliseconds}ms");
         return value;
     }
 

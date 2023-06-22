@@ -5,8 +5,6 @@ public class Cell
     public HashSet<Cell> Links { get; set; }
     public Cell? north, south, east, west;
 
-    public string Body { get; set; } = " ";
-
     public Cell(int row, int col)
     {
         this.row = row;
@@ -54,6 +52,32 @@ public class Cell
 
     public override bool Equals(object? other) =>
         other is Cell && this.row == ((Cell)other).row && this.col == ((Cell)other).col;
+
+
+    public Distances Distances() {
+        var distances = new Distances(this);
+        var frontier = new List<Cell> { this };
+        var newFrontier = new List<Cell> { };
+        while (frontier.Count > 0)
+        {
+            newFrontier.Clear();
+            frontier.ForEach(cell =>
+            {
+                foreach (var n in cell.Links)
+                {
+                    if (!distances.Contains(n))
+                    {
+                        distances[n] = distances[cell] + 1;
+                        newFrontier.Add(n);
+                    }
+                }
+            });
+            frontier = newFrontier.ToList();
+        }
+        return distances;
+
+    }
+
 
 
 }

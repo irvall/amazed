@@ -18,7 +18,7 @@ public class Tests
         var sidewinder = new Sidewinder();
         var grids = pairs.Select(pair => new Grid(pair.Item1, pair.Item2)).ToList();
         grids.ForEach(sidewinder.Run);
-        grids.ForEach(grid => ImageHelper.CreatePNG(grid, $"output/maze_{grid.cols}x{grid.rows}"));
+        grids.ForEach(grid => ImageHelper.CreatePNG(grid, 20, $"output/maze_{grid.cols}x{grid.rows}"));
 
     }
 

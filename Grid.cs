@@ -17,7 +17,7 @@ public class Grid
             cells[i] = new Cell[cols];
             for (int j = 0; j < cols; j++)
             {
-                cells[i][j] = new Cell(j, i);
+                cells[i][j] = new Cell(i, j);
             }
         }
         CreateNeighbourhood();
@@ -67,23 +67,6 @@ public class Grid
         return cells.SelectMany(row => row).ToList();
     }
 
-    public void HighlightRow(int row)
-    {
-        for (int col = 0; col < cols; col++)
-        {
-            this[row, col]!.Body = "*";
-        }
-    }
-
-    public void HighlightCol(int col)
-    {
-        for (int row = 0; row < rows; row++)
-        {
-            this[row, col]!.Body = "*";
-        }
-    }
-
-
     private void CreateNeighbourhood()
     {
         for (int row = 0; row < rows; row++)
@@ -91,10 +74,10 @@ public class Grid
             for (int col = 0; col < cols; col++)
             {
                 var currentCell = cells[row][col];
-                currentCell.west = this[row, col - 1];
-                currentCell.east = this[row, col + 1];
                 currentCell.north = this[row - 1, col];
                 currentCell.south = this[row + 1, col];
+                currentCell.east = this[row, col + 1];
+                currentCell.west = this[row, col - 1];
 
             }
         }
@@ -102,5 +85,13 @@ public class Grid
 
     public int ManhattanDistance(Cell a, Cell b)
         => Math.Abs(a.col - b.col) + Math.Abs(a.row - b.row);
+
+    public virtual string CellContent(Cell cell) => " ";
+
+    public virtual Color? BackgroundColorFor(Cell cell)
+    {
+        return null;
+    }
+
 
 }
